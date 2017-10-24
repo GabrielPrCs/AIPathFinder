@@ -1,6 +1,3 @@
-lee_route(A,B,Obstables,Path) :-
-  waves(B,[[A],[]],Obstacles,Waves),
-  path(A,B,Waves,Path).
 
 waves(B,[Wave|Waves],Obstacles,Waves) :- member(B,Wave), !.
 waves(B,[Wave,LastWave|LastWaves],Obstacles,Waves) :-
