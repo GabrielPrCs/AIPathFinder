@@ -1,9 +1,4 @@
 
-waves(B,[Wave|Waves],Obstacles,Waves) :- member(B,Wave), !.
-waves(B,[Wave,LastWave|LastWaves],Obstacles,Waves) :-
-  next_wave(Wave,LastWave,Obstacles,NextWave),
-  waves(B,[NextWave,Wave,LastWave|LastWaves],Obstacles,Waves).
-
 next_wave(Wave,LastWave,Obstacles,NextWave) :-
   findall(X,admissible(X,Wave,LastWave,Obstacles),NextWave).
 
