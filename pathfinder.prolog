@@ -1,5 +1,3 @@
-/******************NUEVO***********************/
-
 /*
 * Procedimiento que busca el vector unitario (X,Y) que indica la dirección
 * en la cual se encuentra el destino.
@@ -30,7 +28,6 @@ move(Actual, Destination, X, Y):-
   accesible_point((X1,Y1,true)),
   write(X1), write(Y1), nl,
   move((X1,Y1,true),Destination,X,Y), !.
-/**************fin*NUEVO***********************/
 
 /*
 * Procedimiento que verifica que un punto este compuesto por una posición en el
@@ -69,11 +66,6 @@ contains(Point,Board) :-
 /*
 * Una vez que el tablero ha sido validado, se pueden considerar a sus puntos compuesto
 * hechos. Por lo tanto, se agrega cada punto como un hecho a la base de datos.
-*
-generate_facts(Board) :-
-  contains(Point,Board),
-  Point = (X,Y,B), B = true,
-  assert(accesible_point(Point)).
 */
 generate_row_facts([]).
 generate_row_facts([P|T]) :-
@@ -121,10 +113,6 @@ test_contains :-
   contains(Point,Board),!.
 
 test_generate_facts :-
-  get_default_board(Board),
-  generate_facts(Board).
-
-assert :-
   get_default_board(Board),
   generate_facts(Board).
 
