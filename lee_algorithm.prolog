@@ -22,8 +22,14 @@ get_direction(Origin, Destination, X, Y):-
   Y1 is YD - YO, Y1 == 0, Y is 0.
 
 
-
-
+move(Destination, Destination, _, _):- write(llegaste).
+move(Actual, Destination, X, Y):-
+  Actual = (Xa,Ya,_),
+  X1 is Xa + X,
+  Y1 is Ya + Y,
+  accesible_point((X1,Y1,true)),
+  write(X1), write(Y1), nl,
+  move((X1,Y1,true),Destination,X,Y), !.
 /**************fin*NUEVO***********************/
 
 /*
@@ -63,19 +69,23 @@ contains(Point,Board) :-
 /*
 * Una vez que el tablero ha sido validado, se pueden considerar a sus puntos compuesto
 * hechos. Por lo tanto, se agrega cada punto como un hecho a la base de datos.
-*/
+*
 generate_facts(Board) :-
   contains(Point,Board),
   Point = (X,Y,B), B = true,
   assert(accesible_point(Point)).
-
-/*
-* Borra los puntos que estan en un hecho pero son innaccesibles ya que TODOS
-* sus vecinos son innaccesibles.
 */
+generate_row_facts([]).
+generate_row_facts([P|T]) :-
+  P = (X,Y,B), B = true,
+  assert(accesible_point(P)),
+  generate_row_facts(T).
 
-generate_path(Destination,Destination,[]).
-generate_path(ActualPoint,Destination,Path) :-
+generate_facts([]).
+generate_facts(Board) :-
+  Board = [Row|Tail],
+  generate_row_facts(Row),
+  generate_facts(Tail).
 
 
 /*
@@ -87,14 +97,18 @@ get_path(Origin,Destination,Board,Path) :-
   check_board(Board),
   contains(Origin,Board),
   contains(Destination,Board),
-  generate_facts(Board).
+  generate_facts(Board),
+  get_direction(Origin, Destination, X, Y),
+  move(Origin, Destination, X, Y).
 
 /*----------------------------------------------------------------------------*/
 get_default_board(Board) :-
   Board = [
-  [(1,1,true),(1,2,true),(1,3,false)],
-  [(2,1,false),(2,2,true),(2,2,false)],
-  [(3,1,true),(3,2,false),(3,3,true)]
+  [(1,1,true),(1,2,true),(1,3,true), (1,4,true), (1,5,true)],
+  [(2,1,true),(2,2,true),(2,2,true), (2,4,true), (2,5,true)],
+  [(3,1,true),(3,2,true),(3,3,true), (3,4,true), (3,5,true)],
+  [(4,1,true),(4,2,true),(4,3,true), (4,4,true), (4,5,true)],
+  [(5,1,true),(5,2,true),(5,3,true), (5,4,true), (5,5,true)]
   ].
 
 test_check_board :-
@@ -109,3 +123,11 @@ test_contains :-
 test_generate_facts :-
   get_default_board(Board),
   generate_facts(Board).
+
+assert :-
+  get_default_board(Board),
+  generate_facts(Board).
+
+test_get_path :-
+  get_default_board(Board),
+  get_path((1,1,true),(5,5,true), Board, Path).
