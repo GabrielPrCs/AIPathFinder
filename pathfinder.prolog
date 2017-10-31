@@ -62,35 +62,49 @@ generate_neighbours(Board) :-
   generate_row_neighbours(Row),
   generate_neighbours(Tail).
 
-move((Xd,Yd,true),(Xd,Yd,true), Path) :- write(Path), assert(path(Path)), !.
-move((X,Y,true), (Xd,Yd,true), Visited) :-
+move((Xd,Yd,true),(Xd,Yd,true), Visited, Path) :-
+  append(Visited,[(Xd,Yd,true)], VisitedUpdated),
+  length(VisitedUpdated,Length), Path = (VisitedUpdated, Length), !.
+move((X,Y,true), (Xd,Yd,true), Visited, Path) :-
+  append(Visited,[(X,Y,true)], VisitedUpdated),
   neighbour((X,Y), (Xn,Yn)),
   accesible_point((Xn,Yn,true)),
   not(member((Xn,Yn,true), Visited)),
-  append(Visited,[(Xn,Yn,true)], VisitedUpdated),
-  move((Xn,Yn,true),(Xd,Yd,true), VisitedUpdated).
+  move((Xn,Yn,true),(Xd,Yd,true), VisitedUpdated, Path).
 
+get_min_path([],MinLength,Path,Path).
+get_min_path(Paths,MinLength,_,MinPath):-
+  Paths = [H|T],
+  H = (Path,Length),
+  Length < MinLength,
+  get_min_path(T, Length,Path,MinPath).
+get_min_path(Paths,MinLength,Path,MinPath):-
+  Paths = [H|T],
+  H = (_,Length),
+  Length >= MinLength,
+  get_min_path(T, MinLength,Path,MinPath).
 
 /*
 *
 */
-get_path(Origin,Destination,Board,Path) :-
-  % point(Origin),
-  % point(Destination),
-  % check_board(Board),
-  % contains(Origin,Board),
-  % contains(Destination,Board),
+get_path(Origin,Destination,Board,FinalPath) :-
+  check_board(Board),
   generate_facts(Board),
+  accesible_point(Origin), accesible_point(Destination),
   generate_neighbours(Board),
-  move(Origin, Destination, [Origin]).
+  findall(Path,move(Origin, Destination,[], Path),Paths),
+  Paths = [H|T], H = (Path, Length),
+  get_min_path(T,Length,Path,FinalPath).
+
+
 
 /*----------------------------------------------------------------------------*/
 get_default_board(Board) :-
   Board = [
-  [(1,1,true),(1,2,false),(1,3,true),(1,4,true),(1,5,true)],
-  [(2,1,true),(2,2,false),(2,3,true),(2,4,false),(2,5,true)],
-  [(3,1,true),(3,2,false),(3,3,true),(3,4,false),(3,5,true)],
-  [(4,1,true),(4,2,false),(4,3,false),(4,4,false),(4,5,true)],
+  [(1,1,true),(1,2,true),(1,3,true),(1,4,true),(1,5,true)],
+  [(2,1,true),(2,2,true),(2,3,true),(2,4,true),(2,5,true)],
+  [(3,1,true),(3,2,true),(3,3,true),(3,4,true),(3,5,true)],
+  [(4,1,true),(4,2,true),(4,3,true),(4,4,true),(4,5,true)],
   [(5,1,true),(5,2,true),(5,3,true),(5,4,true),(5,5,true)]
   ].
 
@@ -113,4 +127,4 @@ test_generate_neighbours :-
 
 test_get_path :-
   get_default_board(Board),
-  get_path((1,1,true),(3,3,true), Board, Path).
+  get_path((1,1,true),(5,5,true), Board, Path),write(Path).
