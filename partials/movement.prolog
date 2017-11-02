@@ -1,11 +1,11 @@
 move((Xd,Yd,true),(Xd,Yd,true), Visited, Path) :-
-  append(Visited,[(Xd,Yd,true)], VisitedUpdated),
+  append(Visited,[(Xd,Yd)], VisitedUpdated), /* Saque el true de los puntos para facilitar la consulta de java */
   length(VisitedUpdated,Length), Path = (VisitedUpdated, Length), !.
 move((X,Y,true), (Xd,Yd,true), Visited, Path) :-
-  append(Visited,[(X,Y,true)], VisitedUpdated),
+  append(Visited,[(X,Y)], VisitedUpdated), /* Saque el true de los puntos para facilitar la consulta de java */
   neighbour((X,Y), (Xn,Yn)),
   accesible_point((Xn,Yn,true)),
-  not(member((Xn,Yn,true), Visited)),
+  not(member((Xn,Yn), Visited)), /* Saque el true de los puntos para facilitar la consulta de java */
   move((Xn,Yn,true),(Xd,Yd,true), VisitedUpdated, Path).
 
 get_min_path([],_,Path,Path).
