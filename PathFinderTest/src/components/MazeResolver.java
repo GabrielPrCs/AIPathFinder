@@ -5,7 +5,6 @@
  */
 package components;
 
-import boards.BasicBoard;
 import boards.Cell;
 import entities.MobileEntity;
 import exceptions.InvalidMovementException;
@@ -18,18 +17,15 @@ import prolog.MovementQuerier;
  *
  * @author gabpc
  */
-public class GameCharacter extends MobileEntity implements Runnable {
+public class MazeResolver extends MobileEntity implements Runnable {
 
     private Cell destination = null;
-    private BasicBoard myBoard = null;
+    private MazeBoard myBoard = null;
 
-    public GameCharacter(int initialX, int initialY, BasicBoard board) {
+    public MazeResolver(int initialX, int initialY, int finalX, int finalY, MazeBoard board) {
         super(initialX, initialY);
         this.myBoard = board;
-    }
-
-    public void setDestination(int x, int y) {
-        this.destination = new Cell(x, y);
+        this.destination = new Cell(finalX, finalY);
     }
 
     @Override
@@ -37,6 +33,7 @@ public class GameCharacter extends MobileEntity implements Runnable {
         int x = origin.getXPosition() + delta.getXPosition();
         int y = origin.getYPosition() + delta.getYPosition();
         if (this.myBoard.getCellProperty(x, y, "accessible") == Boolean.TRUE) {
+            this.myBoard.setCellProperty(x, y, "visited", true);
             return true;
         }
         throw new InvalidMovementException();
@@ -57,11 +54,10 @@ public class GameCharacter extends MobileEntity implements Runnable {
                 Cell next_point = it.next();
                 Cell delta = new Cell(next_point.getXPosition() - this.getXPosition(), next_point.getYPosition() - this.getYPosition());
                 this.move(delta);
-                System.out.println(this.getXPosition() + " " + this.getYPosition());
-                Thread.sleep(250);
+                Thread.sleep(10);
             }
         } catch (NullPointerException | InvalidMovementException | InterruptedException e) {
-            Logger.getLogger(GameCharacter.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(MazeResolver.class.getName()).log(Level.SEVERE, null, e);
         }
 
     }

@@ -5,8 +5,8 @@
  */
 package prolog;
 
-import boards.BasicBoard;
 import boards.Cell;
+import components.MazeBoard;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,7 +24,7 @@ public class MovementQuerier {
     private Query consult_file = null;
 
     public MovementQuerier() {
-        this.consult_file = new Query("consult('/home/gabpc/Dropbox/Facultad/IntelArtificial/TP/PrologProject/main.prolog')");
+        this.consult_file = new Query("consult('../PrologProject/main.prolog')");
         System.out.println(consult_file.hasSolution() ? "Success" : "Error");
     }
 
@@ -32,8 +32,9 @@ public class MovementQuerier {
         return MessageFormat.format("({0},{1},{2})", cell.getXPosition(), cell.getYPosition(), cell.getProperty("accessible"));
     }
 
-    public Iterator<Cell> getPath(Cell ori, Cell dest, BasicBoard board) throws NullPointerException {
+    public Iterator<Cell> getPath(Cell ori, Cell dest, MazeBoard board) throws NullPointerException {
 
+       
         ori.setProperty("accessible", board.getCellProperty(ori.getXPosition(), ori.getYPosition(), "accessible"));
         dest.setProperty("accessible", board.getCellProperty(dest.getXPosition(), dest.getYPosition(), "accessible"));
 
@@ -47,13 +48,14 @@ public class MovementQuerier {
 
             String row_points = "";
 
-            for (int j = 0; j < row.length; j++) {
+            for (int j = 0; j < row.length ; j++) {
                 Cell cell = row[j];
                 row_points += this.formatCell(cell);
                 if (j < row.length - 1) {
                     row_points += ",";
                 }
             }
+            
 
             String row_formated = MessageFormat.format("[{0}]", row_points);
             if (i < board.getRowCount() - 1) {
@@ -62,6 +64,7 @@ public class MovementQuerier {
             board_formated += row_formated;
         }
         board_formated += "]";
+        
 
         String query = MessageFormat.format("get_path({0},{1},{2},FinalPath).", origin, destination, board_formated);
         System.out.println(query);
