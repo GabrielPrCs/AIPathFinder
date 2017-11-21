@@ -84,6 +84,8 @@ public class MovementQuerier {
             int y = point.arg(2).intValue();
             ar.add(new Cell(x, y));
         }
+        
+        // (new Query("retractall()")).allSolutions();
 
         return ar.iterator();
 

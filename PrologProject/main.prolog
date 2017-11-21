@@ -12,7 +12,8 @@ get_path(Origin,Destination,Board,FinalPath) :-
   generate_neighbours(Board),
   findall(Path,move(Origin, Destination,[], Path),Paths),
   Paths = [H|T], H = (Path, Length),
-  get_min_path(T,Length,Path,FinalPath), !.
+  get_min_path(T,Length,Path,FinalPath),
+  retractall(neighbour(_,_)), retractall(accesible_point(_)), !.
 
 /*----------------------------------------------------------------------------*/
 % run(Path) :-
