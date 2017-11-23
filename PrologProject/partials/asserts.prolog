@@ -1,6 +1,7 @@
 /*
-* Una vez que el tablero ha sido validado, se pueden considerar a sus puntos compuesto
-* hechos. Por lo tanto, se agrega cada punto como un hecho a la base de datos.
+* Genera asertos de los puntos que son accesibles en una fila.
+* Utiliza recursividad sobre cada elemento de la fila.
+* generate_row_facts(+R)
 */
 generate_row_facts([]).
 generate_row_facts([P|T]) :-
@@ -11,12 +12,24 @@ generate_row_facts([P|T]) :-
   P = (_,_,false),
   generate_row_facts(T).
 
+/*
+* Recibe el tablero completo y crea los hechos por fila.
+* Utiliza el procedimiento anterior para resolver los asertos
+* por fila.
+* Utiliza recursividad sobre cada fila del tablero.
+* generate_facts(+B)
+*/
 generate_facts([]).
 generate_facts(Board) :-
   Board = [Row|Tail],
   generate_row_facts(Row),
   generate_facts(Tail).
 
+/*
+* Por cada punto de la fila genera los asertos de los vecinos
+* que puede tener.
+* generate_row_neighbours(+R)
+*/
 generate_row_neighbours([]).
 generate_row_neighbours([P|T]) :-
   P = (X,Y,_),
@@ -30,6 +43,10 @@ generate_row_neighbours([P|T]) :-
   assert(neighbour((X,Y),(X,Y2))),
   generate_row_neighbours(T).
 
+/*
+* Idem a generate_facts pero con los vecinos.
+* generate_neighbours(+B)
+*/
 generate_neighbours([]).
 generate_neighbours(Board) :-
   Board = [Row|Tail],
